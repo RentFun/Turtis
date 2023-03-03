@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'JosefinSans';
+  src: url('../public/assets/fonts/JosefinSans-Bold.ttf') format('truetype');
+}
+
+#font-hack {
+  position: absolute;
+  font-family: 'JosefinSans';
+  left: -200%;
+}
+
+body {
+  margin: 0%;
+  padding: 0%;
+  overflow-x: hidden;
+}
+
+nav {
+  box-shadow: -1px 4px 5px 0px rgba(0, 0, 0, 0.03);
+  -webkit-box-shadow: -1px 4px 5px 0px rgba(0, 0, 0, 0.03);
+  -moz-box-shadow: -1px 4px 5px 0px rgba(0, 0, 0, 0.03);
+}
