@@ -1,84 +1,65 @@
-import { useStore } from '../mobx';
-import { useState, useCallback, useEffect } from 'react';
-import { observer } from 'mobx-react-lite';
-import Footer from '../components/footer';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
-import avtar from '../public/assets/website/avtar.webp';
-import Image from 'next/image';
-import Card from '../components/body/profilecard';
-import LoadingCard from '../components/marketlayout/loadingcard';
+import Card from '@/components/body/profilecard';
+import LoadingCard from '@/components/loadingcard';
 import { useRouter } from 'next/router';
-import { notify } from '../mobx/helpers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
+import {  getSelfTurtles, init, generateNewTurtle } from "@/lib/Web3Client";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlay} from "@fortawesome/free-solid-svg-icons";
 
 function Profile() {
-  const store = useStore();
-  const [isLoading, setLoading] = useState(true);
-  const nfts: IUserNftWithMetadata[] = store.userNftWithMetadata;
-  const history = useRouter();
-
-  const fetchData = useCallback(() => {
-    setLoading(true);
-    store.fetchUserNfts().then(() => setLoading(false));
-  }, [store]);
+  const router = useRouter();
+  const [nftData, setNFTData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    getNFTs();
+    //@ts-ignore
+    window.ethereum.on("accountsChanged", function (accounts) {
+      getNFTs();
+    });
+  }, []);
 
-  useEffect(() => {
-    if (!store.walletConnected) {
-      notify('danger', 'Wallet not connected');
-      history.replace('/');
-    }
-  }, [store.walletConnected, history]);
+  const getNFTs = () => {
+    init().then((res) => {
+      getSelfTurtles().then((data: any) => {
+        console.log("NFTData", data);
+        setNFTData(data);
+        setLoading(false);
+      });
+    });
+  };
 
-  const cards = nfts.map((nft: IUserNftWithMetadata) => (
-    <Card turtle={nft} key={nft.tokenId} />
+  const generateDefaultTurtle = () => {
+    generateNewTurtle().then((data: any) => {
+      getNFTs()
+    });
+  }
+
+  const cards = nftData.map((nft: IUserNftWithMetadata) => (
+    <Card turtle={nft} />
   ));
 
   const dummyCards = [...Array(6)].map((_, index) => (
     <LoadingCard key={index} />
   ));
 
+  const genANewCard = <button
+      onClick={generateDefaultTurtle}
+      className='bg-lightblue border hover:scale-110 hover:brightness-105 border-lightblue lg:rounded-xl rounded-l lg:px-10 lg:py-5 p-3 text-blue font-bold lg:text-3xl text-2xl text-center'>
+    <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon> Mint A Turtle
+  </button>
+
   return (
     <div className='w-full h-full font-primary'>
       <Navbar />
       <div className='bg-greyish h-full w-full px-16 py-16 flex flex-col'>
-        <div>
-          <div className='flex flex-col w-full h-full'>
-            <div className=' bg-lightblue h-36 w-full rounded-t-xl'></div>
-            <div className='flex lg:flex-row flex-col w-full px-8'>
-              <div className='-mt-8 text-center'>
-                <Image
-                  className='inline px-5 object-cover w-1/12 h-16 mr-2 rounded-full cursor-pointer'
-                  src={avtar}
-                  alt='avtar'
-                  height={125}
-                  width={125}
-                />
-              </div>
-              <div className='px-8 py-4'>
-                <h1 className=' font-bold text-3xl'>Nickname</h1>
-                <h1>Connected wallet address: {store.accountAddress}</h1>
-              </div>
-              <div className='py-4 px-8'>
-                <button
-                  onClick={() => history.push('/game')}
-                  className='bg-lightblue border hover:scale-110 hover:brightness-105 border-lightblue rounded-lg p-3 text-blue font-bold text-2xl text-center'>
-                  <FontAwesomeIcon icon={faPlay}></FontAwesomeIcon> Play Now
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        {nftData.length == 0 ? genANewCard : ''}
         <div className='h-full p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12'>
-          {isLoading ? dummyCards : cards}
+          {loading ? dummyCards : cards}
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
-export default observer(Profile);
+export default Profile;

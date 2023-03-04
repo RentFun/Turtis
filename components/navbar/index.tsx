@@ -1,26 +1,43 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import logo from '../../public/assets/logo.png';
-import Image from 'next/dist/client/image';
+import Image from "next/image";
 import Link from 'next/link';
-import { observer } from 'mobx-react-lite';
-import { useStore } from '../../mobx';
+import { init, isAuth } from "@/lib/Web3Client";
 
 const Navbar = () => {
+  const [auth, setAuth] = useState("");
   const router = useRouter();
   const [navbarOpen, setNavbarOpen] = useState(false);
-  const state = useStore();
+
+  useEffect(() => {
+    getAuth();
+    //@ts-ignore
+    window.ethereum.on("accountsChanged", function (accounts) {
+      setAuth(accounts[0]);
+    });
+  }, []);
+
+  const getAuth = async () => {
+    try {
+      if (!auth) {
+        init().then(async (data) => {
+          setAuth(await isAuth());
+        });
+      }
+    } catch (error) {
+      console.log("login first");
+    }
+  };
 
   return (
-    <>
       <nav className='relative lg:max-h-16 flex flex-wrap items-center justify-between px-2 pt-1 mt-0 bg-white font-primary '>
         <div className='container mt-0 px-4 mx-auto flex flex-wrap items-center justify-between '>
           <div className='w-full mt-0 relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start'>
             <Image
               className='absolute -mt-10 cursor-pointer'
-              src={logo}
+              src='/assets/logo.png'
               alt='Logo'
               height={150}
               width={150}
@@ -46,31 +63,21 @@ const Navbar = () => {
               <li className='nav-item px-3'>
                 <button
                   className='rounded-full hover:brightness-105 text-right text-blue font-bold bg-purple text-white p-2 '
-                  onClick={() => state.connectToWallet()}>
-                  {state.walletConnected ? 'Connected' : 'Connect to wallet'}
+                  onClick={init}>
+                    {auth ? `${auth.slice(0, 2)}...${auth.slice(
+                        auth.length - 4,
+                        auth.length
+                    )}` : 'Connect Wallet'}
                 </button>
               </li>
               <li className='nav-item px-3'>
                 <Link href='/market'>Shell Market</Link>
               </li>
-              {/* <li className='nav-item px-3'>
-                <a href='#'>Leaderboard</a>
-              </li> */}
-              {/* <li className='nav-item px-3'>
-                <a href='#'>FAQ&apos;s</a>
-              </li> */}
-              <li className='nav-item px-3'>
-                <Link href='/aboutus'>About Us</Link>
-              </li>
-              {/* <li className='nav-item px-3'>
-                <Link href='/signup'>Sign Up</Link>
-              </li> */}
             </ul>
           </div>
         </div>
       </nav>
-    </>
   );
 };
 
-export default observer(Navbar);
+export default Navbar;
