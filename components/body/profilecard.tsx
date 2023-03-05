@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import {FileHead, dedicatedGateway} from "@/lib/Web3Client";
 
 function UserNftCard({ turtle }: { turtle: IUserNftWithMetadata }) {
     return (
@@ -10,17 +11,12 @@ function UserNftCard({ turtle }: { turtle: IUserNftWithMetadata }) {
             <div className='bg-blue w-cover border-0 rounded-lg p-2'>
                 <Image
                     className='pt-5'
-                    src={turtle.metadata.image}
+                    src={turtle.metadata.image.replace(FileHead, dedicatedGateway)}
                     blurDataURL='/assets/TurtlePlaceholder.png'
                     alt='placeholder'
                     width={220}
                     height={240}
                 />
-                <div className='px-1 py-1 w-2/4 h-10 mx-auto flex flex-row bg-whiteish hover:bg-white rounded-full items-center justify-center'>
-                    <button className='inline-block'>
-                        Play
-                    </button>
-                </div>
             </div>
             <div className='text-xl w-full flex flex-row flex-wrap justify-center py-1'>
                 {turtle.metadata.attributes.map((attr) => (

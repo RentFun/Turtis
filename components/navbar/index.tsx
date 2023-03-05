@@ -7,17 +7,13 @@ import Link from 'next/link';
 import { init, isAuth } from "@/lib/Web3Client";
 
 const Navbar = () => {
-  const [auth, setAuth] = useState("");
+  const [auth, setAuth] = useState('');
   const router = useRouter();
   const [navbarOpen, setNavbarOpen] = useState(false);
 
   useEffect(() => {
     getAuth();
-    //@ts-ignore
-    window.ethereum.on("accountsChanged", function (accounts) {
-      setAuth(accounts[0]);
-    });
-  }, []);
+  }, [auth]);
 
   const getAuth = async () => {
     try {
@@ -59,8 +55,8 @@ const Navbar = () => {
               (navbarOpen ? ' flex' : ' hidden')
             }
             id='example-navbar-danger'>
-            <ul className='flex flex-col lg:flex-row list-none lg:ml-auto -pt-8 -mt-24 items-center'>
-              <li className='nav-item px-3'>
+            <ul className='lg:flex flex-col lg:flex-row list-none lg:ml-auto -pt-8 -mt-24 items-center'>
+              {/*<li className='nav-item px-3'>*/}
                 <button
                   className='rounded-full hover:brightness-105 text-right text-blue font-bold bg-purple text-white p-2 '
                   onClick={init}>
@@ -69,10 +65,7 @@ const Navbar = () => {
                         auth.length
                     )}` : 'Connect Wallet'}
                 </button>
-              </li>
-              <li className='nav-item px-3'>
-                <Link href='/market'>Shell Market</Link>
-              </li>
+              {/*</li>*/}
             </ul>
           </div>
         </div>
