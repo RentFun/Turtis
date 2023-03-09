@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useGame } from './hooks';
-import {init, getHighScore, getSelfTurtles, dummyUserNftWithMetadata} from "@/lib/Web3Client";
+import {init, getHighScore, getUserTurtles, upgradeTurtleWithNewScore} from "@/lib/Web3Client";
 
 const GameScreen = () => {
   const [ended, setEnded] = useState(false);
@@ -17,8 +17,13 @@ const GameScreen = () => {
   );
 
   const mintTurtisCB = useCallback(
-      (score: number) => {
-        console.log("mintTurtisCB-score", score);
+      (score: number, tokenId: number) => {
+        console.log("mintTurtisCB", `score=${score}tokenId=${tokenId}`);
+        const upgradeTurtle = async () => {
+          await upgradeTurtleWithNewScore(Math.floor(score), tokenId);
+        };
+
+        upgradeTurtle();
       },
       []
   );
@@ -27,22 +32,14 @@ const GameScreen = () => {
     router.push('/profile');
   }, [router]);
 
-  // useEffect(() => {
-  //
-  //
-  //   //@ts-ignore
-  //   window.ethereum.on("accountsChanged", function (accounts) {
-  //     router.replace('/profile');
-  //   });
-  // }, []);
-
   useEffect(() => {
     const fetchScoreAndTurtles = async () => {
       await init();
       const score = await getHighScore();
-      const tles = await getSelfTurtles();
+      let turtles = await getUserTurtles();
 
-      console.log("tles", tles);
+      console.log("tles", turtles);
+      // @ts-ignore
 
       if (game && !ended) {
         console.log('starting game');
@@ -53,17 +50,13 @@ const GameScreen = () => {
             endGameCB,
             mintTurtisCB,
             goHomeCB,
-            initMetaData: tles,
-            // highScore: score,
-            // goHomeCB,
-            // initMetaData: tutle
+            initMetaData: turtles,
           },
         });
       }
     };
 
     fetchScoreAndTurtles();
-
 
     if (ended) {
       console.log('rerouting');

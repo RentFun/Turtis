@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import Image from "next/image";
-import Link from 'next/link';
 import { init, isAuth } from "@/lib/Web3Client";
 
 const Navbar = () => {
@@ -12,20 +11,18 @@ const Navbar = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
 
   useEffect(() => {
-    getAuth();
-  }, [auth]);
-
-  const getAuth = async () => {
-    try {
-      if (!auth) {
-        init().then(async (data) => {
+      const getAuth = async () => {
+          await init();
           setAuth(await isAuth());
-        });
       }
-    } catch (error) {
-      console.log("login first");
-    }
-  };
+
+      getAuth();
+
+      //@ts-ignore
+      window.ethereum.on("accountsChanged", function (accounts) {
+          getAuth();
+      });
+  }, [auth]);
 
   return (
       <nav className='relative lg:max-h-16 flex flex-wrap items-center justify-between px-2 pt-1 mt-0 bg-white font-primary '>

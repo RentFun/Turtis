@@ -10,14 +10,14 @@ export class TurtleDetails extends Phaser.GameObjects.Container {
   id!: Phaser.GameObjects.Text;
 
   speedTitleText!: Phaser.GameObjects.Text;
-  ageTitleText!: Phaser.GameObjects.Text;
-  travelledTitleText!: Phaser.GameObjects.Text;
-  dobTitleText!: Phaser.GameObjects.Text;
+  nextScoreLevelTitleText!: Phaser.GameObjects.Text;
+  IsRentedTitleText!: Phaser.GameObjects.Text;
+  endTimeTitleText!: Phaser.GameObjects.Text;
 
   speedText!: Phaser.GameObjects.Text;
-  ageText!: Phaser.GameObjects.Text;
-  travelledText!: Phaser.GameObjects.Text;
-  dobText!: Phaser.GameObjects.Text;
+  nextScoreLevelText!: Phaser.GameObjects.Text;
+  IsRentedText!: Phaser.GameObjects.Text;
+  endTimeText!: Phaser.GameObjects.Text;
 
   constructor(scene: AbstractScene, x: number, y: number) {
     super(scene, x, y);
@@ -57,29 +57,29 @@ export class TurtleDetails extends Phaser.GameObjects.Container {
     const textYOffset = 42;
 
     this.speedTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 0, 'Speed:', titleConfig).setAlign('left').setOrigin(0, 0.5);
-    this.ageTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 1, 'Age:', titleConfig).setAlign('left').setOrigin(0, 0.5);
-    this.travelledTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 2, 'Travelled:', titleConfig).setAlign('left').setOrigin(0, 0.5);
-    this.dobTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 3, 'DOB:', titleConfig).setAlign('left').setOrigin(0, 0.5);
+    this.nextScoreLevelTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 1, 'Next Level Score:', titleConfig).setAlign('left').setOrigin(0, 0.5);
+    this.IsRentedTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 2, 'Is Rented:', titleConfig).setAlign('left').setOrigin(0, 0.5);
+    this.endTimeTitleText = this.scene.add.text(titlePosX, textStartPosY + textYOffset * 3, 'LeftSeconds:', titleConfig).setAlign('left').setOrigin(0, 0.5);
 
     const textPosX = this.overlay.x + 64;
 
     titleConfig.fontSize = '32px';
-    this.speedText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 0, '342', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
-    this.ageText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 1, '24 years', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
-    this.travelledText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 2, '342 kms', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
-    this.dobText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 3, '22-03-2021', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
+    this.speedText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 0, '10', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
+    this.nextScoreLevelText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 1, '5500', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
+    this.IsRentedText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 2, 'No', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
+    this.endTimeText = this.scene.add.text(textPosX, textStartPosY + textYOffset * 3, 'Unlimited', titleConfig).setAlign('center').setOrigin(0.5, 0.5);
 
     this.add([
       this.turtleName,
       this.id,
       this.speedTitleText,
-      this.ageTitleText,
-      this.travelledTitleText,
-      this.dobTitleText,
+      this.nextScoreLevelTitleText,
+      this.IsRentedTitleText,
+      this.endTimeTitleText,
       this.speedText,
-      this.ageText,
-      this.travelledText,
-      this.dobText
+      this.nextScoreLevelText,
+      this.IsRentedText,
+      this.endTimeText
     ]);
   }
 
@@ -91,12 +91,29 @@ export class TurtleDetails extends Phaser.GameObjects.Container {
       if (attrib.trait_type === 'speed') {
         return true;
       }
-    })
+    });
+
     this.speedText.text = `${speedAttrib ? speedAttrib.value : 0}`;
-    this.ageText.text = '35';
-    this.travelledText.text = '125m';
-    this.dobText.text = '09/09/9999';
+    if (!speedAttrib || typeof speedAttrib.value === "string") {
+      this.nextScoreLevelText.text = '9999999999';
+    } else {
+      this.nextScoreLevelText.text = `${speedAttrib ? this.nextLevelScore(speedAttrib.value) : 9999999999}`
+    }
+
+
+    this.IsRentedText.text = details.rented ? 'Yes' : 'No';
+    this.endTimeText.text =  details.rented ? (details.endTime - Math.floor(Date.now() / 1000)).toString() : 'Unlimited';
   }
 
-
+  nextLevelScore = (speed: number) => {
+    if (speed < 12) {
+      return (speed + 1) * 400;
+    } else if (speed < 15) {
+      return (speed + 1) * 2000;
+    } else if (speed < 18) {
+      return (speed + 1) * 6000;
+    } else {
+      return (speed + 1) * 12000;
+    }
+  }
 }

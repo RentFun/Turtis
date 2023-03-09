@@ -224,7 +224,12 @@ export class TurtleSelectionMenu extends Phaser.GameObjects.Container {
           return true;
         }
       })
-      this.emit(CUSTOM_EVENTS.START_GAME, speedAttrib ? speedAttrib.value : 0, this.currentTurtleIndex);
+      const turtle = this.turtlesData[this.currentTurtleIndex]
+      const tokenId = turtle.tokenId;
+      const rented = turtle.rented;
+      const endTime = turtle.endTime;
+
+      this.emit(CUSTOM_EVENTS.START_GAME, speedAttrib ? speedAttrib.value : 0, this.currentTurtleIndex, tokenId, rented, endTime);
     });
   }
 

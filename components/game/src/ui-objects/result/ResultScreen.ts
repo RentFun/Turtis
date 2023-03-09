@@ -26,6 +26,8 @@ export class ResultScreen extends Phaser.GameObjects.Container {
   mintTurtleText!: Phaser.GameObjects.Text;
 
   isMintEnabled = false;
+  score: number;
+  tokenId: number;
 
   constructor(scene: AbstractScene) {
     super(scene, CAM_CENTER.x, CAM_CENTER.y);
@@ -36,6 +38,8 @@ export class ResultScreen extends Phaser.GameObjects.Container {
     this.addCTA();
     this.addMintTurtle();
     this.scene.add.existing(this);
+    this.tokenId = -1;
+    this.score = 0;
   }
 
   private addOverlay() {
@@ -116,7 +120,7 @@ export class ResultScreen extends Phaser.GameObjects.Container {
       onYoyo: () => {
         this.mintTurtleImage.setAlpha(0.6);
         this.scene.audioManager.play('turtleMint');
-        this.mintTurtleText.text = 'Congratulations!\nA new Turtis awaits you\nin the marketplace.'
+        this.mintTurtleText.text = 'Congratulations!\nYour Turtle is upgraded.'
       }
     })
   }
@@ -136,7 +140,7 @@ export class ResultScreen extends Phaser.GameObjects.Container {
       if (!this.isMintEnabled) {
         return;
       }
-      this.scene.initGameData.mintTurtisCB();
+      this.scene.initGameData.mintTurtisCB(this.score, this.tokenId);
       this.playTurtisTween();
       this.isMintEnabled = false;
       this.events.emit(CUSTOM_EVENTS.MINT_TURTIS);
@@ -146,7 +150,8 @@ export class ResultScreen extends Phaser.GameObjects.Container {
     ]);
   }
 
-  updateResultDetails(resultDetails: { highScore: number, isMintable: boolean, travelled: string, score: string }): void {
+  updateResultDetails(resultDetails: { highScore: number, isMintable: boolean, travelled: string, score: string, scoreValue: number }): void {
+    this.score = resultDetails.scoreValue;
     this.highScoreText.text = `${resultDetails.highScore}`;
     this.yourScoreText.text = resultDetails.score;
     this.travelledText.text = resultDetails.travelled;
@@ -158,7 +163,7 @@ export class ResultScreen extends Phaser.GameObjects.Container {
         color: '#FFFFFF'
       }
       this.mintTurtleImage.setAlpha(1);
-      this.mintTurtleText.text = 'Tap to Mint New Turtis!';
+      this.mintTurtleText.text = 'Tap to upgrade your turtle!';
       this.mintTurtleText.setStyle(titleConfig);
       this.mintTurtleText.y = 0;
       this.isMintEnabled = true;
@@ -171,7 +176,7 @@ export class ResultScreen extends Phaser.GameObjects.Container {
         color: '#CCCCCC'
       }
       this.mintTurtleImage.setAlpha(0.6);
-      this.mintTurtleText.text = 'Beat your highscore to mint!';
+      this.mintTurtleText.text = 'Score higher to upgrade your turtle!';
       this.mintTurtleText.setStyle(titleConfig);
       this.mintTurtleText.y = 0;
       this.isMintEnabled = false;

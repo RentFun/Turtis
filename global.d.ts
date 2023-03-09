@@ -42,8 +42,18 @@ interface IComponentIndices {
 
 interface IUserNftWithMetadata extends IUserNft {
   metadata: IMetadata;
+  rented: boolean;
+  endTime: number;
 }
 
 interface IMarketNftWithMetadata extends IMarketNft {
   metadata: IMetadata;
+}
+
+interface Rental {
+  renter: string,
+  contract_: string,
+  tokenId: number,
+  vault: string,
+  endTime: number,
 }

@@ -87,8 +87,10 @@ export class UIManager {
     this.gameManager.endGame();
     const highScore = this.scene.initGameData.highScore;
     const score = this.coreUI.score;
+    const newSpeed = this.getNewSpeed(score) * 0.005;
+    const oldSpeed = this.gameManager.gameComponents.pawn.speed;
     this.scene.initGameData.endGameCB(score, this.distanceMeter.distanceCovered);
-    this.resultScreen.updateResultDetails({ travelled: this.distanceMeter.text, score: this.coreUI.scoreText.text, isMintable: score > highScore, highScore: this.scene.initGameData.highScore })
+    this.resultScreen.updateResultDetails({ travelled: this.distanceMeter.text, score: this.coreUI.scoreText.text, scoreValue: score, isMintable: score > highScore && newSpeed > oldSpeed, highScore: this.scene.initGameData.highScore })
     this.resultScreen.showResultScreen();
     this.hideGameUI();
     this.logo.showLogo();
@@ -155,9 +157,12 @@ export class UIManager {
 
       this.sideBar.pauseResumeButton.handleOnClick(true);
     });
-    this.turtleSelectionMenu.on(CUSTOM_EVENTS.START_GAME, (speed: number, index: number) => {
+    this.turtleSelectionMenu.on(CUSTOM_EVENTS.START_GAME, (speed: number, index: number, tokenId: number, rented: boolean, endTime: number) => {
       this.gameManager.gameComponents.pawn.changePawn(speed, index);
       this.gameManager.gameComponents.pawn.showPawnInitially();
+      this.resultScreen.tokenId = tokenId;
+      this.gameManager.rented = rented;
+      this.gameManager.endTime = endTime;
     });
     this.gameManager.gameComponents.pawn.turtle.on(CUSTOM_EVENTS.PAWN_SPAWNED, () => {
       this.showGameUI();
@@ -189,5 +194,19 @@ export class UIManager {
     }
     this.distanceMeter.updateDistance(this.gameManager.gameComponents.scrollSpeed);
     this.coreUI.increaseScore(this.gameManager.gameComponents.scrollSpeed);
+  }
+
+  getNewSpeed = (score: number) => {
+    let newSpeed: number;
+    if (score < 4800) {
+      newSpeed = score / 400;
+    } else if (score < 30000) {
+      newSpeed = score / 2000;
+    } else if (score < 108000) {
+      newSpeed = score / 6000;
+    } else {
+      newSpeed = score / 12000;
+    }
+    return Math.floor(newSpeed);
   }
 }

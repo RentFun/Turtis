@@ -22,6 +22,8 @@ export class GameManager {
 
   isGameStopped = false;
   isGamePaused = false;
+  rented = false;
+  endTime = 0;
 
   constructor(scene: AbstractScene) {
     this.scene = scene;
@@ -100,6 +102,10 @@ export class GameManager {
   }
 
   update(delta: number) {
+    if (this.rented && this.endTime < Math.floor(Date.now() / 1000)) {
+      this.endGame();
+    }
+
     if (this.isGameStopped || this.isGamePaused) {
       return;
     }
