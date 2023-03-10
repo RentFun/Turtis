@@ -60,7 +60,7 @@ function Profile() {
     <div className='w-full h-full font-primary'>
       <Navbar />
       <div className='bg-greyish h-full w-full px-16 py-16 flex flex-col'>
-        <div className='h-full p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6' style={{ width: '60rem'}}>
+        <div className='h-full p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6' style={{ width: '48rem'}}>
           {cards}
         </div>
 

@@ -103,7 +103,9 @@ export class GameManager {
 
   update(delta: number) {
     if (this.rented && this.endTime < Math.floor(Date.now() / 1000)) {
-      this.endGame();
+      this.scene.time.delayedCall(120, () => {
+        this.events.emit(CUSTOM_EVENTS.PAWN_DEAD);
+      });
     }
 
     if (this.isGameStopped || this.isGamePaused) {
