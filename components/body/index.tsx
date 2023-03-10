@@ -2,7 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 
 function Body() {
   const Router = useRouter();
@@ -27,18 +26,13 @@ function Body() {
         </div>
 
         {/* section-4 */}
-        <div className='lg:text-left text-center flex flex-col-reverse lg:flex-row w-full px-16 pt-16  bg-pattern'>
-          <div className='lg:w-2/3 w-full mx-auto'>
-          </div>
-          <div className='flex'>
-            <Image
-                src='/assets/website/turtles.svg'
-                alt='Homepage turtles'
-                height={450}
-                width={200}
-            />
-          </div>
-        </div>
+        {/*<div className='lg:text-left text-center flex flex-col-reverse lg:flex-row w-full px-16 pt-16  bg-pattern'>*/}
+        {/*  <div className='lg:w-2/3 w-full mx-auto'>*/}
+        {/*  </div>*/}
+        {/*  <div className='flex'>*/}
+        {/*      <img src="/assets/website/turtles.svg" alt="Homepage turtles" style={{ height: '450', width: '200'}}/>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </div>
   );
 }

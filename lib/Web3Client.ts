@@ -245,6 +245,7 @@ export const getUserTurtles = async () => {
   const owned = await getSelfTurtles();
   const rented = await getAliveRentals();
 
+  // @ts-ignore
   return [...owned, ...rented];
 };
 
@@ -277,9 +278,10 @@ export const getAliveRentals = async () => {
       rentFunContract.getAliveRentals(currentUser, TurtisAddress).then(async function (transaction: any) {
         const datas = transaction.map(async (item: Rental) => {
           let tokenURI = await getTokenUrlById(item.tokenId);
-          console.log("tokenURI", tokenURI);
+          // @ts-ignore
           tokenURI = tokenURI.replace(FileHead, dedicatedGateway);
           let metadata = await (
+              // @ts-ignore
               await fetch(tokenURI)
           ).json();
           metadata.image = metadata.image.replace(FileHead, dedicatedGateway);

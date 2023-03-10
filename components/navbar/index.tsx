@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import Image from "next/image";
 import { init, isAuth } from "@/lib/Web3Client";
 
 const Navbar = () => {
@@ -25,19 +24,16 @@ const Navbar = () => {
   }, [auth]);
 
   return (
-      <nav className='relative lg:max-h-16 flex flex-wrap items-center justify-between px-2 pt-1 mt-0 bg-white font-primary '>
+      <nav className='lg:max-h-16 flex flex-wrap items-center justify-between px-2 pt-20 mt-0 bg-white font-primary '>
         <div className='container mt-0 px-4 mx-auto flex flex-wrap items-center justify-between '>
           <div className='w-full mt-0 relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start'>
-            <Image
-              className='absolute -mt-10 cursor-pointer'
-              src='/assets/logo.png'
-              alt='Logo'
-              height={150}
-              width={150}
-              onClick={() => {
-                router.push('/');
-              }}
-            />
+              <img className='absolute -mt-10 cursor-pointer'
+                   src='https://rentfun.infura-ipfs.io/ipfs/QmddbEoiSBZ1auMLMwqpm83tvuWE9PKhpGuwrFWpNVq2Na'
+                   alt="Logo" style={{ height: '150', width: '150'}}
+                   onClick={() => {
+                       router.push('/');
+                   }}
+              />
 
             <button
               className='text-black cursor-pointer text-xl leading-none px-3 pt-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none'
