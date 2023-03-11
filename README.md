@@ -1,8 +1,5 @@
 # POC-Game-Turtis-Demo for rentfun
-This project if forked from ![Dodging-Turtis](https://github.com/Dodging-Turtis/Dodging-Turtis)
-
-# POC-RentFun-Demo
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This project if forked from [Dodging-Turtis](https://github.com/Dodging-Turtis/Dodging-Turtis)
 
 ## Getting Started
 
