@@ -157,11 +157,12 @@ export class UIManager {
 
       this.sideBar.pauseResumeButton.handleOnClick(true);
     });
-    this.turtleSelectionMenu.on(CUSTOM_EVENTS.START_GAME, (speed: number, index: number, tokenId: number) => {
+    this.turtleSelectionMenu.on(CUSTOM_EVENTS.START_GAME, (speed: number, index: number, tokenId: number, rented: boolean, endTime: number) => {
       this.gameManager.gameComponents.pawn.changePawn(speed, index);
       this.gameManager.gameComponents.pawn.showPawnInitially();
       this.resultScreen.tokenId = tokenId;
-
+      this.gameManager.rented = rented;
+      this.gameManager.endTime = endTime;
     });
     this.gameManager.gameComponents.pawn.turtle.on(CUSTOM_EVENTS.PAWN_SPAWNED, () => {
       this.showGameUI();

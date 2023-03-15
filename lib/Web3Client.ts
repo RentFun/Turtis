@@ -3,9 +3,11 @@ import TurtisData from "../deployments/ArbitrumGoerli/Turtis.json"; // get Turti
 import { create } from "ipfs-http-client";
 import {Buffer} from 'buffer';
 import {ImageNames, AllTurtleNames} from "@/lib/names";
+import { RentFun } from "rentfun";
 
 const TurtisAddress = TurtisData.address;
 const TurtisABI = TurtisData.abi;
+const rentfun = new RentFun();
 
 let contract: ethers.Contract;
 let provider: ethers.providers.Web3Provider;
@@ -228,7 +230,15 @@ export const generateNewTurtle = async () => {
   return generateTurtle(4000, tokenURI);
 };
 
-export const getUserTurtles = () => {
+export const getUserTurtles = async () => {
+  const owned = await getOwnedTurtles();
+  const rented = await getRentedTurtles();
+
+  // @ts-ignore
+  return [...owned, ...rented];
+};
+
+export const getOwnedTurtles = () => {
   return new Promise(function (res, rej) {
     try {
       contract.getUserOwnedNFTs(currentUser).then(async function (transaction: any) {
@@ -239,7 +249,7 @@ export const getUserTurtles = () => {
               await fetch(tokenURI)
           ).json();
           metadata.image = metadata.image.replace(FileHead, dedicatedGateway);
-          return {tokenId: item.tokenId, tokenUri: tokenURI, metadata: metadata};
+          return {tokenId: item.tokenId, tokenUri: tokenURI, metadata: metadata, rented: false, endTime: 0};
         });
 
         const numFruits = await Promise.all(datas);
@@ -247,6 +257,31 @@ export const getUserTurtles = () => {
       });
     } catch (error) {
       console.log("getSelfTurtlesError", error);
+    }
+  });
+};
+
+export const getRentedTurtles = async () => {
+  return new Promise(function (res, rej) {
+    try {
+      rentfun.getAliveRentals(currentUser, TurtisAddress).then(async function (rentals: Rental[]) {
+        const datas = rentals.map(async (rental: Rental) => {
+          let tokenURI = await getTokenUrlById(rental.tokenId);
+          // @ts-ignore
+          tokenURI = tokenURI.replace(FileHead, dedicatedGateway);
+          let metadata = await (
+              // @ts-ignore
+              await fetch(tokenURI)
+          ).json();
+          metadata.image = metadata.image.replace(FileHead, dedicatedGateway);
+          return {tokenId: rental.tokenId, tokenUri: tokenURI, metadata: metadata, rented: true, endTime: rental.endTime};
+        });
+
+        const numFruits = await Promise.all(datas);
+        res(await numFruits);
+      });
+    } catch (error) {
+      console.log("getAliveRentalsError", error);
     }
   });
 };
