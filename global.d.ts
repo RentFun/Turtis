@@ -7,16 +7,6 @@ interface IUserNft {
   tokenUri: string;
 }
 
-interface IMarketNft {
-  itemId: number;
-  tokenId: number;
-  tokenUri: string;
-  owner: string;
-  seller: string;
-  sold: boolean;
-  price: number;
-}
-
 interface IMetadata {
   name: string;
   description: string;
@@ -42,18 +32,4 @@ interface IComponentIndices {
 
 interface IUserNftWithMetadata extends IUserNft {
   metadata: IMetadata;
-  rented: boolean;
-  endTime: number;
-}
-
-interface IMarketNftWithMetadata extends IMarketNft {
-  metadata: IMetadata;
-}
-
-interface Rental {
-  renter: string,
-  contract_: string,
-  tokenId: number,
-  vault: string,
-  endTime: number,
 }

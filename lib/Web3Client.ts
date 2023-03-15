@@ -1,17 +1,12 @@
 import { ethers } from "ethers";
 import TurtisData from "../deployments/ArbitrumGoerli/Turtis.json"; // get Turtis data
-import RentFunData from "../deployments/ArbitrumGoerli/RentFun.json"; // get RentFunABI data
 import { create } from "ipfs-http-client";
 import {Buffer} from 'buffer';
 import {ImageNames, AllTurtleNames} from "@/lib/names";
 
-const RentFunAddress = RentFunData.address;
-const RentFunABI = RentFunData.abi;
-
 const TurtisAddress = TurtisData.address;
 const TurtisABI = TurtisData.abi;
 
-let rentFunContract: ethers.Contract;
 let contract: ethers.Contract;
 let provider: ethers.providers.Web3Provider;
 let currentUser: string;
@@ -39,7 +34,6 @@ export const init = async () => {
   //@ts-ignore
   provider = new ethers.providers.Web3Provider(window.ethereum, "any");
   provider.on("network", (oldNetwork) => {
-    console.log(oldNetwork.chainId);
     if (oldNetwork.chainId != 421613) {
       //@ts-ignore
       window.ethereum
@@ -68,9 +62,7 @@ export const init = async () => {
   await provider.send("eth_requestAccounts", []);
   const signer = provider.getSigner();
   currentUser = await signer.getAddress();
-  rentFunContract = new ethers.Contract(RentFunAddress, RentFunABI, signer);
   contract = new ethers.Contract(TurtisAddress, TurtisABI, signer);
-  console.log("TurtisAddress", TurtisAddress);
   return true;
 };
 
@@ -117,7 +109,7 @@ export const upgradeTurtle = async (score: number, tokenURI: string, tokenId: nu
 };
 
 export const upgradeTurtleWithNewScore = async (score: number, tokenId: number) => {
-  const turtles = await getSelfTurtles();
+  const turtles = await getUserTurtles();
 
   // @ts-ignore
   const turtle = turtles.find((obj) => {
@@ -236,20 +228,7 @@ export const generateNewTurtle = async () => {
   return generateTurtle(4000, tokenURI);
 };
 
-
-/**
- * * func get my nft in smart contract
- * @returns my NFTs
- */
-export const getUserTurtles = async () => {
-  const owned = await getSelfTurtles();
-  const rented = await getAliveRentals();
-
-  // @ts-ignore
-  return [...owned, ...rented];
-};
-
-export const getSelfTurtles = () => {
+export const getUserTurtles = () => {
   return new Promise(function (res, rej) {
     try {
       contract.getUserOwnedNFTs(currentUser).then(async function (transaction: any) {
@@ -260,7 +239,7 @@ export const getSelfTurtles = () => {
               await fetch(tokenURI)
           ).json();
           metadata.image = metadata.image.replace(FileHead, dedicatedGateway);
-          return {tokenId: item.tokenId, tokenUri: item.tokenURI, metadata: metadata, rented: false, endTime: 0};
+          return {tokenId: item.tokenId, tokenUri: tokenURI, metadata: metadata};
         });
 
         const numFruits = await Promise.all(datas);
@@ -268,31 +247,6 @@ export const getSelfTurtles = () => {
       });
     } catch (error) {
       console.log("getSelfTurtlesError", error);
-    }
-  });
-};
-
-export const getAliveRentals = async () => {
-  return new Promise(function (res, rej) {
-    try {
-      rentFunContract.getAliveRentals(currentUser, TurtisAddress).then(async function (transaction: any) {
-        const datas = transaction.map(async (item: Rental) => {
-          let tokenURI = await getTokenUrlById(item.tokenId);
-          // @ts-ignore
-          tokenURI = tokenURI.replace(FileHead, dedicatedGateway);
-          let metadata = await (
-              // @ts-ignore
-              await fetch(tokenURI)
-          ).json();
-          metadata.image = metadata.image.replace(FileHead, dedicatedGateway);
-          return {tokenId: item.tokenId, tokenUri: tokenURI, metadata: metadata, rented: true, endTime: item.endTime};
-        });
-
-        const numFruits = await Promise.all(datas);
-        res(await numFruits);
-      });
-    } catch (error) {
-      console.log("getAliveRentalsError", error);
     }
   });
 };
@@ -373,14 +327,14 @@ export const generateRandomTurtle = () => {
 
 const getNewSpeed = (score: number) => {
   let newSpeed: number;
-  if (score < 4800) {
+  if (score <= 4800) {
     newSpeed = score / 400;
-  } else if (score < 30000) {
-    newSpeed = score / 2000;
-  } else if (score < 108000) {
-    newSpeed = score / 6000;
+  } else if (score <= 13800) {
+    newSpeed = 12 + (score - 4800) / 3000;
+  } else if (score <= 31800) {
+    newSpeed = 15 + (score - 13800) / 6000;
   } else {
-    newSpeed = score / 12000;
+    newSpeed = 18 + (score - 31800) / 12000;
   }
   return Math.floor(newSpeed);
 };

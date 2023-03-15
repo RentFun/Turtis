@@ -157,12 +157,11 @@ export class UIManager {
 
       this.sideBar.pauseResumeButton.handleOnClick(true);
     });
-    this.turtleSelectionMenu.on(CUSTOM_EVENTS.START_GAME, (speed: number, index: number, tokenId: number, rented: boolean, endTime: number) => {
+    this.turtleSelectionMenu.on(CUSTOM_EVENTS.START_GAME, (speed: number, index: number, tokenId: number) => {
       this.gameManager.gameComponents.pawn.changePawn(speed, index);
       this.gameManager.gameComponents.pawn.showPawnInitially();
       this.resultScreen.tokenId = tokenId;
-      this.gameManager.rented = rented;
-      this.gameManager.endTime = endTime;
+
     });
     this.gameManager.gameComponents.pawn.turtle.on(CUSTOM_EVENTS.PAWN_SPAWNED, () => {
       this.showGameUI();
@@ -198,14 +197,14 @@ export class UIManager {
 
   getNewSpeed = (score: number) => {
     let newSpeed: number;
-    if (score < 4800) {
+    if (score <= 4800) {
       newSpeed = score / 400;
-    } else if (score < 30000) {
-      newSpeed = score / 2000;
-    } else if (score < 108000) {
-      newSpeed = score / 6000;
+    } else if (score <= 13800) {
+      newSpeed = 12 + (score - 4800) / 3000;
+    } else if (score <= 31800) {
+      newSpeed = 15 + (score - 13800) / 6000;
     } else {
-      newSpeed = score / 12000;
+      newSpeed = 18 + (score - 31800) / 12000;
     }
     return Math.floor(newSpeed);
   }

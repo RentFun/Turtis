@@ -22,8 +22,6 @@ export class GameManager {
 
   isGameStopped = false;
   isGamePaused = false;
-  rented = false;
-  endTime = 0;
 
   constructor(scene: AbstractScene) {
     this.scene = scene;
@@ -102,12 +100,6 @@ export class GameManager {
   }
 
   update(delta: number) {
-    if (this.rented && this.endTime < Math.floor(Date.now() / 1000)) {
-      this.scene.time.delayedCall(120, () => {
-        this.events.emit(CUSTOM_EVENTS.PAWN_DEAD);
-      });
-    }
-
     if (this.isGameStopped || this.isGamePaused) {
       return;
     }
