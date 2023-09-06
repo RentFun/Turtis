@@ -14542,10 +14542,10 @@ remove-trailing-separator@^1.0.1:
   resolved "https://registry.npmjs.org/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz"
   integrity sha1-wkvOKig62tW8P1jg1IJJuSN52O8=
 
-rentfun@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/rentfun/-/rentfun-0.0.6.tgz#b3b30dd48cf7d87e331433bb15b937a8fb30a9ee"
-  integrity sha512-FJ8YkBUB7COQPVsEJH9mno41pzwD2mouJ6TvTmygbt8LDT0I4hE2/fz0duR1m7e8j2aTHtoNe31DxpCxelc2wg==
+rentfun@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/rentfun/-/rentfun-0.1.0.tgz#8a35a625c492f43c7682e86f01d1bfcf5a13a2b5"
+  integrity sha512-IF79FSsngmWtbF1DybV8U/WrHuBr5hp4J69hIUcoO8t93Nt++Gy67xc/XnKEM3JwponPp8AOibDjsEVhIJcEKA==
   dependencies:
     ethers "^5.7.1"
 

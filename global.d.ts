@@ -38,8 +38,10 @@ interface IUserNftWithMetadata extends IUserNft {
 
 interface Rental {
   renter: string,
-  contract: string,
-  tokenId: number,
   vault: string,
+  collection: string,
+  tokenId: number,
+  amount: number,
+  startTime: number,
   endTime: number,
 }
